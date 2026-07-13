@@ -7,11 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.feuchte.enderDragen.EnderDragen;
 
-import org.bukkit.inventory.InventoryHolder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +30,15 @@ public class StatsGUI implements InventoryHolder {
     }
 
     public void open(Player player) {
-        String title = plugin.getConfig().getString("gui.title", "§6§lEnder Drachen Statistiken");
+        String titleString = plugin.getConfig().getString("gui.title", "§6§lEnder Drachen Statistiken");
+        
+        Component title;
+        if (titleString.contains("<") && titleString.contains(">")) {
+            title = MiniMessage.miniMessage().deserialize(titleString);
+        } else {
+            title = LegacyComponentSerializer.legacySection().deserialize(titleString);
+        }
+        
         inv = Bukkit.createInventory(this, 27, title);
         
         int dragonsKilled = plugin.getStatsConfig().getInt("statistics.dragons-killed", 0);
@@ -47,7 +58,7 @@ public class StatsGUI implements InventoryHolder {
         ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta glassMeta = glass.getItemMeta();
         if (glassMeta != null) {
-            glassMeta.setDisplayName(" ");
+            glassMeta.displayName(Component.empty());
             glass.setItemMeta(glassMeta);
         }
         
@@ -64,8 +75,11 @@ public class StatsGUI implements InventoryHolder {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(name);
-            meta.setLore(lore);
+            meta.displayName(LegacyComponentSerializer.legacySection().deserialize(name));
+            List<Component> loreComponents = lore.stream()
+                .map(line -> (Component) LegacyComponentSerializer.legacySection().deserialize(line))
+                .toList();
+            meta.lore(loreComponents);
             item.setItemMeta(meta);
         }
         return item;
