@@ -1,0 +1,11 @@
+# EnderDragen Plugin Konfiguration
+
+# Chancen (0.0 - 1.0)
+chances:
+  dragon-egg: 0.05    # 5% Chance für Drachen-Ei
+  dragon-head: 0.15   # 15% Chance für Drachen-Kopf
+  elytra: 0.20        # 20% Chance für Elytra
+
+# GUI Einstellungen
+gui:
+  title: "§6§lEnder Drachen Statistiken"

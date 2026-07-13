@@ -1,0 +1,10 @@
+.gradle/
+build/
+*.jar
+!.gradle/wrapper/gradle-wrapper.jar
+!EnderDragen-1.0.0.jar
+.idea/
+*.iml
+.vscode/
+bin/
+temp_jar_content/

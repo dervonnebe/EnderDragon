@@ -1,0 +1,20 @@
+name: EnderDragen
+version: '1.0.0'
+main: org.feuchte.enderDragen.EnderDragen
+api-version: '1.21'
+prefix: DVN
+authors: [ Jack F. ]
+
+commands:
+  dragon:
+    description: EnderDragen Befehle
+    usage: /<command> [stats|setchance|resetstats|reload]
+    aliases: [ed, enderdragon]
+
+permissions:
+  enderdragon.admin:
+    description: Admin Befehle für EnderDragen
+    default: op
+  enderdragon.stats:
+    description: Erlaubt das Anzeigen von Statistiken
+    default: true
