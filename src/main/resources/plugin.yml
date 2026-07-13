@@ -8,14 +8,14 @@ website: "https://github.com/dervonnebe/EnderDragon"
 
 commands:
   dragon:
-    description: EnderDragen Befehle
+    description: EnderDragon commands
     usage: /<command> [stats|setchance|resetstats|reload]
     aliases: [ed, enderdragon]
 
 permissions:
   enderdragon.admin:
-    description: Admin Befehle für EnderDragen
+    description: Admin commands for EnderDragon
     default: op
   enderdragon.stats:
-    description: Erlaubt das Anzeigen von Statistiken
+    description: Allows viewing the statistics GUI
     default: true

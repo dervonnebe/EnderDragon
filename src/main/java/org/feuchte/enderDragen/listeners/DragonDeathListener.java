@@ -38,19 +38,19 @@ public class DragonDeathListener implements Listener {
         if (random.nextDouble() < dragonEggChance) {
             world.dropItemNaturally(deathLocation, new ItemStack(Material.DRAGON_EGG));
             plugin.incrementStat("statistics.dragon-eggs-dropped");
-            plugin.getLogger().info("Drachen-Ei gedroppt!");
+            plugin.getLogger().info(plugin.getLanguageManager().getRawMessage("log.egg-dropped"));
         }
         
         if (random.nextDouble() < headChance) {
             world.dropItemNaturally(deathLocation, new ItemStack(Material.DRAGON_HEAD));
             plugin.incrementStat("statistics.dragon-heads-dropped");
-            plugin.getLogger().info("Drachen-Kopf gedroppt!");
+            plugin.getLogger().info(plugin.getLanguageManager().getRawMessage("log.head-dropped"));
         }
         
         if (random.nextDouble() < elytraChance) {
             world.dropItemNaturally(deathLocation, new ItemStack(Material.ELYTRA));
             plugin.incrementStat("statistics.elytras-dropped");
-            plugin.getLogger().info("Elytra gedroppt!");
+            plugin.getLogger().info(plugin.getLanguageManager().getRawMessage("log.elytra-dropped"));
         }
     }
 }

@@ -30,15 +30,7 @@ public class StatsGUI implements InventoryHolder {
     }
 
     public void open(Player player) {
-        String titleString = plugin.getConfig().getString("gui.title", "§6§lEnder Drachen Statistiken");
-        
-        Component title;
-        if (titleString.contains("<") && titleString.contains(">")) {
-            title = MiniMessage.miniMessage().deserialize(titleString);
-        } else {
-            title = LegacyComponentSerializer.legacySection().deserialize(titleString);
-        }
-        
+        Component title = plugin.getLanguageManager().getMessage("gui.title");
         inv = Bukkit.createInventory(this, 27, title);
         
         int dragonsKilled = plugin.getStatsConfig().getInt("statistics.dragons-killed", 0);
@@ -50,10 +42,14 @@ public class StatsGUI implements InventoryHolder {
         double headChance = plugin.getConfig().getDouble("chances.dragon-head", 0.15) * 100.0;
         double elytraChance = plugin.getConfig().getDouble("chances.elytra", 0.2) * 100.0;
         
-        inv.setItem(10, createItem(Material.DRAGON_EGG, "<light_purple><bold>Drachen-Eier", Arrays.asList("<gray>Gedroppt: <yellow>" + dragonEggsDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", dragonEggChance))));
-        inv.setItem(12, createItem(Material.DRAGON_HEAD, "<gold><bold>Drachen getötet", Arrays.asList("<gray>Gesamt: <yellow>" + dragonsKilled)));
-        inv.setItem(14, createItem(Material.DRAGON_HEAD, "<dark_purple><bold>Drachen-Köpfe", Arrays.asList("<gray>Gedroppt: <yellow>" + headsDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", headChance))));
-        inv.setItem(16, createItem(Material.ELYTRA, "<aqua><bold>Elytras", Arrays.asList("<gray>Gedroppt: <yellow>" + elytrasDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", elytraChance))));
+        String formatDropped = plugin.getLanguageManager().getRawMessage("gui.lore.dropped", "%d");
+        String formatChance = plugin.getLanguageManager().getRawMessage("gui.lore.chance", "%.1f%%");
+        String formatTotal = plugin.getLanguageManager().getRawMessage("gui.lore.total", "%d");
+        
+        inv.setItem(10, createItem(Material.DRAGON_EGG, plugin.getLanguageManager().getRawMessage("gui.items.dragon-egg"), Arrays.asList(String.format(formatDropped, dragonEggsDropped), "", String.format(formatChance, dragonEggChance))));
+        inv.setItem(12, createItem(Material.DRAGON_HEAD, plugin.getLanguageManager().getRawMessage("gui.items.dragons-killed"), Arrays.asList(String.format(formatTotal, dragonsKilled))));
+        inv.setItem(14, createItem(Material.DRAGON_HEAD, plugin.getLanguageManager().getRawMessage("gui.items.dragon-head"), Arrays.asList(String.format(formatDropped, headsDropped), "", String.format(formatChance, headChance))));
+        inv.setItem(16, createItem(Material.ELYTRA, plugin.getLanguageManager().getRawMessage("gui.items.elytra"), Arrays.asList(String.format(formatDropped, elytrasDropped), "", String.format(formatChance, elytraChance))));
         
         ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta glassMeta = glass.getItemMeta();

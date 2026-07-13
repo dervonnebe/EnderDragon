@@ -31,7 +31,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
         switch (args[0].toLowerCase()) {
             case "stats":
                 if (!(sender instanceof Player player)) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Dieser Befehl kann nur von Spielern ausgeführt werden!"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.only-player"));
                     return true;
                 }
                 new StatsGUI(plugin).open(player);
@@ -39,31 +39,31 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
                 
             case "setchance":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
                     return true;
                 }
                 if (args.length != 3) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Verwendung: /dragon setchance <egg|head|elytra> <chance>"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.usage-setchance"));
                     return true;
                 }
                 return setChance(sender, args[1], args[2]);
                 
             case "resetstats":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
                     return true;
                 }
                 plugin.resetStats();
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Statistiken wurden zurückgesetzt!"));
+                sender.sendMessage(plugin.getLanguageManager().getMessage("commands.stats-reset"));
                 return true;
                 
             case "reload":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.no-permission"));
                     return true;
                 }
                 plugin.reloadPluginConfig();
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Konfiguration neu geladen!"));
+                sender.sendMessage(plugin.getLanguageManager().getMessage("commands.config-reloaded"));
                 return true;
                 
             default:
@@ -76,7 +76,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
         try {
             double value = Double.parseDouble(valueStr);
             if (value < 0.0 || value > 1.0) {
-                sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Die Chance muss zwischen 0.0 und 1.0 liegen!"));
+                sender.sendMessage(plugin.getLanguageManager().getMessage("commands.invalid-chance"));
                 return true;
             }
             
@@ -98,7 +98,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
                     displayName = "Elytra";
                     break;
                 default:
-                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Ungültiger Typ! Verwende: egg, head oder elytra"));
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("commands.invalid-type"));
                     return true;
             }
             
@@ -106,21 +106,21 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
             plugin.saveConfig();
             plugin.reloadPluginConfig();
             
-            sender.sendMessage(MiniMessage.miniMessage().deserialize(String.format("<green>%s Chance wurde auf %.1f%% gesetzt!", displayName, value * 100.0)));
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.chance-set", displayName, String.format("%.1f%%", value * 100.0)));
             return true;
         } catch (NumberFormatException e) {
-            sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Ungültige Zahl!"));
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.invalid-number"));
             return true;
         }
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(MiniMessage.miniMessage().deserialize("<gold><bold>=== EnderDragen Befehle ==="));
-        sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon stats <gray>- Zeigt Statistiken GUI"));
+        sender.sendMessage(plugin.getLanguageManager().getMessage("commands.help.header"));
+        sender.sendMessage(plugin.getLanguageManager().getMessage("commands.help.stats"));
         if (sender.hasPermission("enderdragon.admin")) {
-            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon setchance <egg|head|elytra> <chance> <gray>- Setzt Chancen"));
-            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon resetstats <gray>- Setzt Statistiken zurück"));
-            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon reload <gray>- Lädt Config neu"));
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.help.setchance"));
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.help.resetstats"));
+            sender.sendMessage(plugin.getLanguageManager().getMessage("commands.help.reload"));
         }
     }
 

@@ -1,0 +1,33 @@
+gui:
+  title: "<gold><bold>Ender Drachen Statistiken"
+  items:
+    dragon-egg: "<light_purple><bold>Drachen-Eier"
+    dragon-head: "<dark_purple><bold>Drachen-Köpfe"
+    elytra: "<aqua><bold>Elytras"
+    dragons-killed: "<gold><bold>Drachen getötet"
+  lore:
+    dropped: "<gray>Gedroppt: <yellow>%s"
+    chance: "<gray>Drop Chance: <green>%s"
+    total: "<gray>Gesamt: <yellow>%s"
+
+commands:
+  only-player: "<red>Dieser Befehl kann nur von Spielern ausgeführt werden!"
+  no-permission: "<red>Keine Berechtigung!"
+  usage-setchance: "<red>Verwendung: /dragon setchance <egg|head|elytra> <chance>"
+  stats-reset: "<green>Statistiken wurden zurückgesetzt!"
+  config-reloaded: "<green>Konfiguration neu geladen!"
+  invalid-chance: "<red>Die Chance muss zwischen 0.0 und 1.0 liegen!"
+  invalid-type: "<red>Ungültiger Typ! Verwende: egg, head oder elytra"
+  invalid-number: "<red>Ungültige Zahl!"
+  chance-set: "<green>%s Chance wurde auf %s gesetzt!"
+  help:
+    header: "<gold><bold>=== EnderDragen Befehle ==="
+    stats: "<yellow>/dragon stats <gray>- Zeigt Statistiken GUI"
+    setchance: "<yellow>/dragon setchance <egg|head|elytra> <chance> <gray>- Setzt Chancen"
+    resetstats: "<yellow>/dragon resetstats <gray>- Setzt Statistiken zurück"
+    reload: "<yellow>/dragon reload <gray>- Lädt Config neu"
+
+log:
+  egg-dropped: "Drachen-Ei gedroppt!"
+  head-dropped: "Drachen-Kopf gedroppt!"
+  elytra-dropped: "Elytra gedroppt!"

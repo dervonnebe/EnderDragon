@@ -13,6 +13,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import lombok.Getter;
+import org.feuchte.enderDragen.utils.LanguageManager;
 
 public final class EnderDragen extends JavaPlugin {
 
@@ -20,11 +21,14 @@ public final class EnderDragen extends JavaPlugin {
     
     @Getter
     private FileConfiguration statsConfig;
+    
+    @Getter
+    private LanguageManager languageManager;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        migrateConfigToMiniMessage();
+        languageManager = new LanguageManager(this);
         loadStatsFile();
         
         new Registry(this).registerAll();
@@ -32,20 +36,10 @@ public final class EnderDragen extends JavaPlugin {
         getLogger().info("EnderDragen Plugin aktiviert!");
     }
 
-    private void migrateConfigToMiniMessage() {
-        boolean changed = false;
-        String title = getConfig().getString("gui.title");
-        if (title != null && (title.contains("§") || title.contains("&"))) {
-            Component legacy = LegacyComponentSerializer.legacySection().deserialize(title.replace("&", "§"));
-            String miniMessage = MiniMessage.miniMessage().serialize(legacy);
-            getConfig().set("gui.title", miniMessage);
-            changed = true;
-        }
-        
-        if (changed) {
-            saveConfig();
-            getLogger().info("Konfiguration wurde auf MiniMessage-Format aktualisiert!");
-        }
+    public void reloadPluginConfig() {
+        reloadConfig();
+        languageManager.loadLanguage();
+        loadStatsFile();
     }
 
     @Override
@@ -68,11 +62,6 @@ public final class EnderDragen extends JavaPlugin {
         } catch (IOException e) {
             getLogger().severe("Konnte stats.yml nicht speichern: " + e.getMessage());
         }
-    }
-
-    public void reloadPluginConfig() {
-        reloadConfig();
-        loadStatsFile();
     }
 
     public void resetStats() {
