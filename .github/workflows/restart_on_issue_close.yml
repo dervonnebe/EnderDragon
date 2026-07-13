@@ -1,0 +1,19 @@
+name: Restart Build on Issue Close
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  restart-build:
+    if: contains(github.event.issue.labels.*.name, 'build-failure')
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Trigger Release Workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Issue ${{ github.event.issue.number }} closed. Restarting the release build..."
+          gh workflow run release.yml --ref ${{ github.event.repository.default_branch }}

@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - 'build.gradle'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -57,7 +58,7 @@ jobs:
           $ERROR_LOG
           \`\`\`
           EOF
-          gh issue create --title "🚨 Build Fehler: ${{ github.sha }}" --body-file issue_body.md --label "bug"
+          gh issue create --title "🚨 Build Fehler: ${{ github.sha }}" --body-file issue_body.md --label "build-failure"
 
       - name: Extract Version
         id: get_version
@@ -139,4 +140,4 @@ jobs:
           
           **Workflow Run Logs:** [Hier klicken](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           EOF
-          gh issue create --title "🚨 Release Fehler: v${{ needs.build.outputs.version }}" --body-file issue_body.md --label "bug"
+          gh issue create --title "🚨 Release Fehler: v${{ needs.build.outputs.version }}" --body-file issue_body.md --label "build-failure"
