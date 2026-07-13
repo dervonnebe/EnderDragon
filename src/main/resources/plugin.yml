@@ -3,7 +3,8 @@ version: '1.0.0'
 main: org.feuchte.enderDragen.EnderDragen
 api-version: '1.21'
 prefix: DVN
-authors: [ Jack F. ]
+authors: [ Jack F. <jackfeuchte@outlook.de> ]
+website: "https://github.com/dervonnebe/EnderDragon"
 
 commands:
   dragon:
