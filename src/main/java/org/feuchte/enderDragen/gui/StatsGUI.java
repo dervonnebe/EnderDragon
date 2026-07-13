@@ -11,16 +11,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.feuchte.enderDragen.EnderDragen;
 
+import org.bukkit.inventory.InventoryHolder;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class StatsGUI {
+public class StatsGUI implements InventoryHolder {
 
     private final EnderDragen plugin;
+    private Inventory inv;
+
+    @Override
+    public Inventory getInventory() {
+        return inv;
+    }
 
     public void open(Player player) {
         String title = plugin.getConfig().getString("gui.title", "§6§lEnder Drachen Statistiken");
-        Inventory inv = Bukkit.createInventory(null, 27, title);
+        inv = Bukkit.createInventory(this, 27, title);
         
         int dragonsKilled = plugin.getStatsConfig().getInt("statistics.dragons-killed", 0);
         int dragonEggsDropped = plugin.getStatsConfig().getInt("statistics.dragon-eggs-dropped", 0);

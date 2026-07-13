@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.feuchte.enderDragen.commands.DragonCommand;
@@ -118,8 +119,14 @@ public final class EnderDragen extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        String title = getConfig().getString("gui.title", "§6§lEnder Drachen Statistiken");
-        if (event.getView().getTitle().equals(title)) {
+        if (event.getView().getTopInventory().getHolder() instanceof org.feuchte.enderDragen.gui.StatsGUI) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof org.feuchte.enderDragen.gui.StatsGUI) {
             event.setCancelled(true);
         }
     }
