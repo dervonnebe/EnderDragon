@@ -1,0 +1,142 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'build.gradle'
+
+jobs:
+  build:
+    name: Build Plugin
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
+      should_release: ${{ steps.check_release.outputs.SHOULD_RELEASE }}
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew build > build_log.txt 2>&1 || (cat build_log.txt && exit 1)
+          cat build_log.txt
+
+      - name: Create Issue on Failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ERROR_LOG=$(tail -n 50 build_log.txt)
+          cat <<EOF > issue_body.md
+          ## Build Failed! 🚨
+          
+          Das automatische Build-Skript ist beim Testen/Kompilieren fehlgeschlagen.
+          
+          **Commit:** [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          **Workflow Run Logs:** [Hier klicken](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ### Log-Auszug (Letzte 50 Zeilen):
+          \`\`\`text
+          $ERROR_LOG
+          \`\`\`
+          EOF
+          gh issue create --title "🚨 Build Fehler: ${{ github.sha }}" --body-file issue_body.md --label "bug"
+
+      - name: Extract Version
+        id: get_version
+        run: |
+          VERSION=$(grep "^version\s*=" build.gradle | sed "s/version\s*=\s*//g" | tr -d "'\" ")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if Release Exists
+        id: check_release
+        run: |
+          if git ls-remote --tags origin | grep -q "refs/tags/v${{ steps.get_version.outputs.VERSION }}"; then
+            echo "Version v${{ steps.get_version.outputs.VERSION }} already exists. Skipping release."
+            echo "SHOULD_RELEASE=false" >> $GITHUB_OUTPUT
+          else
+            echo "SHOULD_RELEASE=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Artifact
+        if: steps.check_release.outputs.SHOULD_RELEASE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: EnderDragen-Plugin
+          path: build/libs/*.jar
+
+  release:
+    name: Create Release
+    needs: build
+    if: needs.build.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: EnderDragen-Plugin
+          path: build/libs/
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          VERSION="${{ needs.build.outputs.version }}"
+          
+          echo "### Letzte 5 Commits" > release_notes.md
+          git log -5 --pretty=format:"* [\`%h\`](https://github.com/${{ github.repository }}/commit/%H) - %s (%an)" >> release_notes.md
+          
+          echo "" >> release_notes.md
+          echo "" >> release_notes.md
+          
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            echo "### Änderungen vergleichen" >> release_notes.md
+            echo "[Vergleich $PREV_TAG...v$VERSION](https://github.com/${{ github.repository }}/compare/$PREV_TAG...v$VERSION)" >> release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: Release v${{ needs.build.outputs.version }}
+          body_path: release_notes.md
+          files: build/libs/*.jar
+
+      - name: Create Issue on Release Failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat <<EOF > issue_body.md
+          ## Release Failed! 🚨
+          
+          Fehler beim Erstellen des GitHub Releases \`v${{ needs.build.outputs.version }}\`.
+          
+          **Workflow Run Logs:** [Hier klicken](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          gh issue create --title "🚨 Release Fehler: v${{ needs.build.outputs.version }}" --body-file issue_body.md --label "bug"
