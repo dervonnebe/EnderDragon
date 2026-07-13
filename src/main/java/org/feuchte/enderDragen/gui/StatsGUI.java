@@ -50,10 +50,10 @@ public class StatsGUI implements InventoryHolder {
         double headChance = plugin.getConfig().getDouble("chances.dragon-head", 0.15) * 100.0;
         double elytraChance = plugin.getConfig().getDouble("chances.elytra", 0.2) * 100.0;
         
-        inv.setItem(10, createItem(Material.DRAGON_EGG, "§d§lDrachen-Eier", Arrays.asList("§7Gedroppt: §e" + dragonEggsDropped, "", "§7Drop Chance: §a" + String.format("%.1f%%", dragonEggChance))));
-        inv.setItem(12, createItem(Material.DRAGON_HEAD, "§6§lDrachen getötet", Arrays.asList("§7Gesamt: §e" + dragonsKilled)));
-        inv.setItem(14, createItem(Material.DRAGON_HEAD, "§5§lDrachen-Köpfe", Arrays.asList("§7Gedroppt: §e" + headsDropped, "", "§7Drop Chance: §a" + String.format("%.1f%%", headChance))));
-        inv.setItem(16, createItem(Material.ELYTRA, "§b§lElytras", Arrays.asList("§7Gedroppt: §e" + elytrasDropped, "", "§7Drop Chance: §a" + String.format("%.1f%%", elytraChance))));
+        inv.setItem(10, createItem(Material.DRAGON_EGG, "<light_purple><bold>Drachen-Eier", Arrays.asList("<gray>Gedroppt: <yellow>" + dragonEggsDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", dragonEggChance))));
+        inv.setItem(12, createItem(Material.DRAGON_HEAD, "<gold><bold>Drachen getötet", Arrays.asList("<gray>Gesamt: <yellow>" + dragonsKilled)));
+        inv.setItem(14, createItem(Material.DRAGON_HEAD, "<dark_purple><bold>Drachen-Köpfe", Arrays.asList("<gray>Gedroppt: <yellow>" + headsDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", headChance))));
+        inv.setItem(16, createItem(Material.ELYTRA, "<aqua><bold>Elytras", Arrays.asList("<gray>Gedroppt: <yellow>" + elytrasDropped, "", "<gray>Drop Chance: <green>" + String.format("%.1f%%", elytraChance))));
         
         ItemStack glass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta glassMeta = glass.getItemMeta();
@@ -75,9 +75,9 @@ public class StatsGUI implements InventoryHolder {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.displayName(LegacyComponentSerializer.legacySection().deserialize(name));
+            meta.displayName(MiniMessage.miniMessage().deserialize(name).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
             List<Component> loreComponents = lore.stream()
-                .map(line -> (Component) LegacyComponentSerializer.legacySection().deserialize(line))
+                .map(line -> (Component) MiniMessage.miniMessage().deserialize(line).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false))
                 .toList();
             meta.lore(loreComponents);
             item.setItemMeta(meta);

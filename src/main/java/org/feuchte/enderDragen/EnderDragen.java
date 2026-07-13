@@ -8,6 +8,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.feuchte.enderDragen.utils.Registry;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import lombok.Getter;
 
 public final class EnderDragen extends JavaPlugin {
@@ -20,11 +24,28 @@ public final class EnderDragen extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        migrateConfigToMiniMessage();
         loadStatsFile();
         
         new Registry(this).registerAll();
         
         getLogger().info("EnderDragen Plugin aktiviert!");
+    }
+
+    private void migrateConfigToMiniMessage() {
+        boolean changed = false;
+        String title = getConfig().getString("gui.title");
+        if (title != null && (title.contains("§") || title.contains("&"))) {
+            Component legacy = LegacyComponentSerializer.legacySection().deserialize(title.replace("&", "§"));
+            String miniMessage = MiniMessage.miniMessage().serialize(legacy);
+            getConfig().set("gui.title", miniMessage);
+            changed = true;
+        }
+        
+        if (changed) {
+            saveConfig();
+            getLogger().info("Konfiguration wurde auf MiniMessage-Format aktualisiert!");
+        }
     }
 
     @Override

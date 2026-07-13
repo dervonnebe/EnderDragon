@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.feuchte.enderDragen.EnderDragen;
 import org.feuchte.enderDragen.gui.StatsGUI;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
         switch (args[0].toLowerCase()) {
             case "stats":
                 if (!(sender instanceof Player player)) {
-                    sender.sendMessage("§cDieser Befehl kann nur von Spielern ausgeführt werden!");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Dieser Befehl kann nur von Spielern ausgeführt werden!"));
                     return true;
                 }
                 new StatsGUI(plugin).open(player);
@@ -37,31 +39,31 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
                 
             case "setchance":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage("§cKeine Berechtigung!");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
                     return true;
                 }
                 if (args.length != 3) {
-                    sender.sendMessage("§cVerwendung: /dragon setchance <egg|head|elytra> <chance>");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Verwendung: /dragon setchance <egg|head|elytra> <chance>"));
                     return true;
                 }
                 return setChance(sender, args[1], args[2]);
                 
             case "resetstats":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage("§cKeine Berechtigung!");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
                     return true;
                 }
                 plugin.resetStats();
-                sender.sendMessage("§aStatistiken wurden zurückgesetzt!");
+                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Statistiken wurden zurückgesetzt!"));
                 return true;
                 
             case "reload":
                 if (!sender.hasPermission("enderdragon.admin")) {
-                    sender.sendMessage("§cKeine Berechtigung!");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Keine Berechtigung!"));
                     return true;
                 }
                 plugin.reloadPluginConfig();
-                sender.sendMessage("§aKonfiguration neu geladen!");
+                sender.sendMessage(MiniMessage.miniMessage().deserialize("<green>Konfiguration neu geladen!"));
                 return true;
                 
             default:
@@ -74,7 +76,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
         try {
             double value = Double.parseDouble(valueStr);
             if (value < 0.0 || value > 1.0) {
-                sender.sendMessage("§cDie Chance muss zwischen 0.0 und 1.0 liegen!");
+                sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Die Chance muss zwischen 0.0 und 1.0 liegen!"));
                 return true;
             }
             
@@ -96,7 +98,7 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
                     displayName = "Elytra";
                     break;
                 default:
-                    sender.sendMessage("§cUngültiger Typ! Verwende: egg, head oder elytra");
+                    sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Ungültiger Typ! Verwende: egg, head oder elytra"));
                     return true;
             }
             
@@ -104,21 +106,21 @@ public class DragonCommand implements CommandExecutor, TabCompleter {
             plugin.saveConfig();
             plugin.reloadPluginConfig();
             
-            sender.sendMessage(String.format("§a%s Chance wurde auf %.1f%% gesetzt!", displayName, value * 100.0));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(String.format("<green>%s Chance wurde auf %.1f%% gesetzt!", displayName, value * 100.0)));
             return true;
         } catch (NumberFormatException e) {
-            sender.sendMessage("§cUngültige Zahl!");
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Ungültige Zahl!"));
             return true;
         }
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage("§6§l=== EnderDragen Befehle ===");
-        sender.sendMessage("§e/dragon stats §7- Zeigt Statistiken GUI");
+        sender.sendMessage(MiniMessage.miniMessage().deserialize("<gold><bold>=== EnderDragen Befehle ==="));
+        sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon stats <gray>- Zeigt Statistiken GUI"));
         if (sender.hasPermission("enderdragon.admin")) {
-            sender.sendMessage("§e/dragon setchance <egg|head|elytra> <chance> §7- Setzt Chancen");
-            sender.sendMessage("§e/dragon resetstats §7- Setzt Statistiken zurück");
-            sender.sendMessage("§e/dragon reload §7- Lädt Config neu");
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon setchance <egg|head|elytra> <chance> <gray>- Setzt Chancen"));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon resetstats <gray>- Setzt Statistiken zurück"));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<yellow>/dragon reload <gray>- Lädt Config neu"));
         }
     }
 
