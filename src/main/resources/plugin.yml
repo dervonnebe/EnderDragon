@@ -1,5 +1,5 @@
 name: EnderDragen
-version: '1.0.0'
+version: '${version}'
 main: org.feuchte.enderDragen.EnderDragen
 api-version: '1.21'
 prefix: DVN
